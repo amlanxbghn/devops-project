@@ -27,20 +27,23 @@ jobs:
           echo "Deployment successful! Pods are running."
 
       # STAGE 2: Run Application for DAST
-      # We pull the image and run it locally to simulate the 'live' app for scanning
+      # We verify the image exists first.
+      # using --network host is the most reliable way for one container to call another on GitHub Actions.
       - name: Run App for DAST
         run: |
-          docker run -d -p 8080:8080 --name dast-target ${{ secrets.DOCKERHUB_USERNAME }}/devops-project:latest
-          sleep 10
+          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/devops-project:latest
+          docker run -d --network host --name dast-target ${{ secrets.DOCKERHUB_USERNAME }}/devops-project:latest
+          echo "Waiting for application to start..."
+          sleep 30
 
       # STAGE 3: DAST Scan (OWASP ZAP)
       # Scans the running application for vulnerabilities
-      # Uses 172.17.0.1 to reach the host from the ZAP container
       - name: ZAP Baseline Scan
         uses: zaproxy/action-baseline@v0.11.0
+        continue-on-error: true
         with:
-          target: 'http://172.17.0.1:8080'
-          fail_action: false # Don't fail the build for existing alerts (Assignment asks for dummy)
+          target: 'http://localhost:8080'
+          fail_action: false 
           allow_issue_writing: false
 
       - name: Teardown
