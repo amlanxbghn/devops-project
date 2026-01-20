@@ -43,6 +43,7 @@ jobs:
         continue-on-error: true
         with:
           target: 'http://localhost:8080'
+          artifact_name: 'dast-report'
           fail_action: false 
           allow_issue_writing: false
 
