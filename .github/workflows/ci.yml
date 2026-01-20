@@ -26,16 +26,16 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      # STAGE 3: SAST (Static Application Security Testing) with CodeQL
+      # STAGE 3: Linting (Checkstyle)
+      - name: Run Checkstyle
+        run: mvn checkstyle:check
+
+      # STAGE 4: SAST (Static Application Security Testing) with CodeQL
       # Initializes CodeQL execution to trace the build.
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
           languages: java
-
-      # STAGE 4: Linting (Checkstyle)
-      - name: Run Checkstyle
-        run: mvn checkstyle:check
 
       # STAGE 5: Unit Tests & Build
       # Runs JUnit tests and packages the JAR. 
