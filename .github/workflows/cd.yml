@@ -35,10 +35,11 @@ jobs:
 
       # STAGE 3: DAST Scan (OWASP ZAP)
       # Scans the running application for vulnerabilities
+      # Uses 172.17.0.1 to reach the host from the ZAP container
       - name: ZAP Baseline Scan
         uses: zaproxy/action-baseline@v0.11.0
         with:
-          target: 'http://localhost:8080'
+          target: 'http://172.17.0.1:8080'
           fail_action: false # Don't fail the build for existing alerts (Assignment asks for dummy)
           allow_issue_writing: false
 
